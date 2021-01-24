@@ -21,3 +21,10 @@ async def wrist(ctx):
     await ctx.send(bot_config["wrist"]["text"])
     await ctx.send(exercises[r]["text"])
     await ctx.send(file=discord.File(exercises[r]["image"]))
+
+@bot.command(name='mind')
+async def mind(ctx):
+    exercises = bot_config["mindfulness"]["exercises"]
+    r = random.randrange(len(exercises))
+    await ctx.send(bot_config["mindfulness"]["text"])
+    await ctx.send(exercises[r]["text"])
