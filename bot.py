@@ -1,3 +1,6 @@
+import yaml
+import random
+
 import os
 import pymongo
 import asyncio
@@ -95,7 +98,7 @@ async def set_timers():
                             timer_schedule.addEvent(datetime.timedelta(minutes=20), m.id, send_20_min)
                             db.users.update_one({"id": m.id}, {'$set': {"20_min_reminder": True}})
                         if exist['1_hr_reminder'] == False and exist['health_reminders']==True:
-                            timer_schedule.addEvent(datetime.timedelta(hours=1), m.id, send_1_hr)
+                            timer_schedule.addEvent(datetime.timedelta(minutes=60), m.id, send_1_hr)
                             db.users.update_one({"id": m.id}, {'$set': {"1_hr_reminder": True}})
         
         await asyncio.sleep(10)
@@ -288,7 +291,35 @@ async def population(ctx):
 async def game(ctx):
     await send_dms()
     await check_game(ctx)
-    
+
+with open("config.yaml", 'r') as stream:
+    bot_config = yaml.safe_load(stream)
+
+@bot.command(name='brightness')
+async def brightness(ctx):
+    await ctx.send(bot_config["brightness"]["text"])
+    await ctx.send(file=discord.File(bot_config["brightness"]["image"]))
+
+@bot.command(name='posture')
+async def posture(ctx):
+    await ctx.send(bot_config["posture"]["text"])
+    await ctx.send(file=discord.File(bot_config["posture"]["image"]))
+
+@bot.command(name='wrist')
+async def wrist(ctx):
+    exercises = bot_config["wrist"]["exercises"]
+    r = random.randrange(len(exercises))
+    await ctx.send(bot_config["wrist"]["text"])
+    await ctx.send(exercises[r]["text"])
+    await ctx.send(file=discord.File(exercises[r]["image"]))
+
+@bot.command(name='mind')
+async def mind(ctx):
+    exercises = bot_config["mindfulness"]["exercises"]
+    r = random.randrange(len(exercises))
+    await ctx.send(bot_config["mindfulness"]["text"])
+    await ctx.send(exercises[r]["text"])
+
 bot.run(TOKEN)
 
 
