@@ -1,0 +1,34 @@
+health_reminders:
+- To prevent eye strain, remember the 20-20-20 rule. Every 20 minutes, look at something 20 feet away for 20 seconds
+- Drinking plenty of water and eating a healthy snack will help your focus.
+- A positive mindset will help you play better. If you find yourself frustrated, take a small break to mentally reset.
+- In online games, be kind to others. Take advantage of mute and report functionalities to block out toxic players.
+- Check your posture. Use the g!ergonomics command for information on healthy posture while gaming.
+- Breathe. Deep breaths will help maintain focus and reduce anxiety while gaming.
+
+brightness:
+  text: To prevent eye-strain, you should choose an appropriate screen brightness. Adjust your screen  to match the lighting of the room. If you hold a piece of paper next to this white image, they should match in brightness.
+  image: images/white.jpg 
+
+posture:
+  text: Keep good posture when gaming to avoid long term injuries or pain.
+  image: images/posture.png
+
+wrist:
+  text: Streching is import to prevent wrist injury from long term gaming. Try this stretch.
+  exercises:
+    - text:
+      |
+        Prayer position stretch.
+        Begin by pressing your palms and fingers together with your fingers pointing upward and your elbows pointing outward.
+        Increase the intensity of the stretch by keeping your elbows in place and lowering your hands.
+        You should feel a mild discomfort but no pain. Hold this stretch for 30 seconds.
+      image: images/prayer.jpeg
+    - text: 
+      |
+        Supine flexors stretch.
+        Perform this stretch on both hands.
+        Begin with your elbow straight and your palm facing upward.
+        With your other hand, pull your wrist downward, stretching the palm side of your forearm.
+        You should feel a mild discomfort but no pain. Hold this stretch for 30 seconds on each arm.
+      image: images/supline.jpeg
