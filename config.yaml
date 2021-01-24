@@ -1,10 +1,12 @@
 health_reminders:
-- To prevent eye strain, remember the 20-20-20 rule. Every 20 minutes, look at something 20 feet away for 20 seconds
-- Drinking plenty of water and eating a healthy snack will help your focus.
-- A positive mindset will help you play better. If you find yourself frustrated, take a small break to mentally reset.
-- In online games, be kind to others. Take advantage of mute and report functionalities to block out toxic players.
-- Check your posture. Use the g!ergonomics command for information on healthy posture while gaming.
-- Breathe. Deep breaths will help maintain focus and reduce anxiety while gaming.
+  tips:
+    - To prevent eye strain, remember the 20-20-20 rule. Every 20 minutes, look at something 20 feet away for 20 seconds
+    - Drinking plenty of water and eating a healthy snack will help your focus.
+    - A positive mindset will help you play better. If you find yourself frustrated, take a small break to mentally reset.
+    - In online games, be kind to others. Take advantage of mute and report functionalities to block out toxic players.
+    - Check your posture. Use the g!ergonomics command for information on healthy posture while gaming.
+    - Breathe. Deep breaths will help maintain focus and reduce anxiety while gaming.
+  hourly: You've been gaming for an hour. Get up, move around, and take a 5 minute break.
 
 brightness:
   text: 

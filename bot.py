@@ -47,7 +47,10 @@ async def send_20_min(user):
         await m.create_dm()
 
     if data["currently_playing"] == True:
-        await m.dm_channel.send("Try to look at something 20 feet away for 20 seconds!")
+        tips = bot_config["health_reminders"]["tips"]
+        r = random.randrange(len(tips)
+        await m.dm_channel.send("Reminder:")
+        await m.dm_channel.send(tips[r])
     
     db.users.update_one({"id": m.id}, {'$set': {"20_min_reminder": False}})
 
@@ -61,7 +64,7 @@ async def send_1_hr(user):
         await m.create_dm()
 
     if data["currently_playing"] == True:
-        await m.dm_channel.send("Get up, move around, take a 5 minute break!")
+        await m.dm_channel.send(bot_config["health_reminders"]["hourly"])
     
     db.users.update_one({"id": m.id}, {'$set': {"1_hr_reminder": False}})
 
