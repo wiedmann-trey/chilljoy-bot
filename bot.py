@@ -9,7 +9,7 @@ import datetime
 
 from timer import Scheduler
 
-from tasks import TaskScheduler
+from tasks import TaskScheduler, Task
 
 import discord
 from discord.ext import commands
@@ -39,6 +39,27 @@ def find_user(idd):
         for m in guild.members:
             if m.id == idd:
                 return m
+
+async def task_rem(dataa):
+    idd, desc, time = dataa
+    
+    m = find_user(idd)
+
+    sch = pickle.loads(db.users.find_one({"id": m.id})['task_scheduler'])
+
+    count = -1
+    for l in sch.tasks:
+        count += 1
+        if time == datetime.timedelta(minutes=10):
+            sch.tasks.pop(count)
+        if l.description == desc and l.done != True:
+            if m.dm_channel == None:
+                await m.create_dm()
+            
+            await m.dm_channel.send(f'{desc} should be completed in {time}')   
+            break
+    
+    db.users.update_one({"id": m.id}, {'$set': {"task_scheduler": pickle.dumps(sch)}})        
 
 async def send_20_min(user):
     print("20 min achieved")
@@ -95,10 +116,10 @@ async def set_timers():
                 if exist != None:
                     if exist['currently_playing'] == True:
                         if exist['20_min_reminder'] == False and exist['health_reminders']==True:
-                            timer_schedule.addEvent(datetime.timedelta(minutes=20), m.id, send_20_min)
+                            timer_schedule.addEvent(datetime.timedelta(minutes=1), m.id, send_20_min)
                             db.users.update_one({"id": m.id}, {'$set': {"20_min_reminder": True}})
                         if exist['1_hr_reminder'] == False and exist['health_reminders']==True:
-                            timer_schedule.addEvent(datetime.timedelta(minutes=60), m.id, send_1_hr)
+                            timer_schedule.addEvent(datetime.timedelta(minutes=3), m.id, send_1_hr)
                             db.users.update_one({"id": m.id}, {'$set': {"1_hr_reminder": True}})
         
         await asyncio.sleep(10)
@@ -279,7 +300,80 @@ async def addtask(ctx, *args):
         return
 
     hi = pickle.loads(exist["task_scheduler"])
-    print(hi)
+
+    t = Task(args[0], int(args[1]), int(args[2]))
+
+    hi.add(t)
+
+    print(hi.tasks)
+
+    db.users.update_one({"id": m.id}, {'$set': {"task_scheduler": pickle.dumps(hi)}})
+
+    time_until = t.time_until()
+
+    if time_until > datetime.timedelta(hours=5):
+        await ctx.send("5 hour set")
+        timer_schedule.addEvent(time_until-datetime.timedelta(minutes=5), (m.id, args[0], datetime.timedelta(hours=5)), task_rem)
+
+    if time_until > datetime.timedelta(hours=3):
+        await ctx.send("3 hour set")
+        timer_schedule.addEvent(time_until-datetime.timedelta(minutes=4), (m.id, args[0], datetime.timedelta(hours=3)), task_rem)
+
+    if time_until > datetime.timedelta(hours=1):
+        await ctx.send("1 hour set")
+        timer_schedule.addEvent(time_until-datetime.timedelta(minutes=3), (m.id, args[0], datetime.timedelta(hours=1)), task_rem)
+
+    if time_until > datetime.timedelta(minutes=30):
+        await ctx.send("30 minute set")
+        timer_schedule.addEvent(time_until-datetime.timedelta(minutes=2), (m.id, args[0], datetime.timedelta(minutes=30)), task_rem)
+    
+    if time_until > datetime.timedelta(minutes=10):
+        await ctx.send("10 minute set")
+        timer_schedule.addEvent(datetime.timedelta(minutes=1), (m.id, args[0], datetime.timedelta(minutes=10)), task_rem)
+
+    
+
+@bot.command(name='finishtask')
+async def finishtask(ctx, *args):
+    m = ctx.author
+    exist = db.users.find_one({"id": m.id})
+    
+    if exist == None:
+        await ctx.send("You aren't on our list of users. Type 'g!join' if you want to be added!")
+        return
+
+    hi = pickle.loads(exist["task_scheduler"])
+
+    if len(args) == 0:
+        await ctx.send("Choose the number for the task you would like to designate as done:")
+        for i in range(0, len(hi.tasks)):
+            await ctx.send(f'{i}: {hi.tasks[i].description} due by {hi.tasks[i].time}')
+        return
+
+    indd = int(args[0])
+
+    hi.tasks[indd].done = True
+
+    db.users.update_one({"id": m.id}, {'$set': {"task_scheduler": pickle.dumps(hi)}})
+
+    await ctx.send(f'{hi.tasks[indd].description} has been set as done!')
+
+@bot.command(name='cleartask')
+async def cleartask(ctx, *args):
+    m = ctx.author
+    exist = db.users.find_one({"id": m.id})
+    
+    if exist == None:
+        await ctx.send("You aren't on our list of users. Type 'g!join' if you want to be added!")
+        return
+
+    hi = pickle.loads(exist["task_scheduler"])
+
+    hi.tasks = []
+
+    db.users.update_one({"id": m.id}, {'$set': {"task_scheduler": pickle.dumps(hi)}})
+
+    await ctx.send("You list of tasks has been cleared!")
 
 @bot.command(name='population')
 async def population(ctx):

@@ -25,6 +25,7 @@ class Task():
     def __init__(self, description, hour, minute):
         self.description = description
         self.time = datetime.time(hour=hour, minute=minute)
+        self.done = False
 
     def time_until(self):
         return difference(self.time,datetime.datetime.now().time())
