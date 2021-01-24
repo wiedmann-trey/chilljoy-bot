@@ -214,7 +214,7 @@ async def on_ready():
     
 #     await message.channel.send(f'YOU SUCK {message.author.name}')
 
-@bot.command(name='join', help="Adds you to the list of users")
+@bot.command(name='join', help="Adds you to the list of users.")
 async def join(ctx):
     member = ctx.author
     exist = db.users.find_one({"id": member.id})
