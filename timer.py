@@ -11,7 +11,7 @@ class Scheduler:
         while True:
             while len(self.pq) > 0 and self.pq[0][0] < datetime.datetime.now(): 
                 ev = heapq.heappop(self.pq)
-                ev[2](ev[1])
+                await ev[2](ev[1])
             await asyncio.sleep(self.poll_rate)
 
     def addEvent(self, dt, user, call):
@@ -19,3 +19,4 @@ class Scheduler:
 
     def event(dt, user, call):
         return (datetime.datetime.now() + dt, user, call)
+
