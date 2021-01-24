@@ -214,12 +214,7 @@ async def on_ready():
     
 #     await message.channel.send(f'YOU SUCK {message.author.name}')
 
-
-@bot.command(name='hi')
-async def hi(ctx):
-    await ctx.send("YOU ARE COOL!")
-
-@bot.command(name='join')
+@bot.command(name='join', help="Adds you to the list of users")
 async def join(ctx):
     member = ctx.author
     exist = db.users.find_one({"id": member.id})
@@ -240,7 +235,7 @@ async def join(ctx):
     else:
         await ctx.send(f'{member.name} is already a user!')
 
-@bot.command(name='task')
+@bot.command(name='task', help='Turns on or off task reminders.')
 async def task(ctx, *args):
     m = ctx.author
     exist = db.users.find_one({"id": m.id})
@@ -263,7 +258,7 @@ async def task(ctx, *args):
     else:
         await ctx.send("That was not an acceptable argument. Try typing 'on' or 'off' after 'g!task'")
 
-@bot.command(name='health')
+@bot.command(name='health', help='Turns on or off health reminders when gaming.')
 async def health(ctx, *args):
     
     m = ctx.author
@@ -290,7 +285,7 @@ async def health(ctx, *args):
     
         
 
-@bot.command(name='addtask')
+@bot.command(name='addtask', help='Adds a new task to your list of tasks.')
 async def addtask(ctx, *args):
     m = ctx.author
     exist = db.users.find_one({"id": m.id})
@@ -333,7 +328,7 @@ async def addtask(ctx, *args):
 
     
 
-@bot.command(name='finishtask')
+@bot.command(name='finishtask', help='Marks a task as finished.')
 async def finishtask(ctx, *args):
     m = ctx.author
     exist = db.users.find_one({"id": m.id})
@@ -358,7 +353,7 @@ async def finishtask(ctx, *args):
 
     await ctx.send(f'{hi.tasks[indd].description} has been set as done!')
 
-@bot.command(name='cleartask')
+@bot.command(name='cleartask', help='Clears all tasks from your list of tasks')
 async def cleartask(ctx, *args):
     m = ctx.author
     exist = db.users.find_one({"id": m.id})
@@ -375,31 +370,20 @@ async def cleartask(ctx, *args):
 
     await ctx.send("You list of tasks has been cleared!")
 
-@bot.command(name='population')
-async def population(ctx):
-    for guild in bot.guilds:
-        for member in guild.members:
-            await ctx.send(member)
-
-@bot.command(name='game')
-async def game(ctx):
-    await send_dms()
-    await check_game(ctx)
-
 with open("config.yaml", 'r') as stream:
     bot_config = yaml.safe_load(stream)
 
-@bot.command(name='brightness')
+@bot.command(name='brightness', help='Gives info about choosing a healthy screen brightness')
 async def brightness(ctx):
     await ctx.send(bot_config["brightness"]["text"])
     await ctx.send(file=discord.File(bot_config["brightness"]["image"]))
 
-@bot.command(name='posture')
+@bot.command(name='posture', help='Gives info about sitting with a healthy posture')
 async def posture(ctx):
     await ctx.send(bot_config["posture"]["text"])
     await ctx.send(file=discord.File(bot_config["posture"]["image"]))
 
-@bot.command(name='wrist')
+@bot.command(name='wrist', help='Gives a stretch to help prevent wrist injury')
 async def wrist(ctx):
     exercises = bot_config["wrist"]["exercises"]
     r = random.randrange(len(exercises))
@@ -407,7 +391,7 @@ async def wrist(ctx):
     await ctx.send(exercises[r]["text"])
     await ctx.send(file=discord.File(exercises[r]["image"]))
 
-@bot.command(name='mind')
+@bot.command(name='mind', help='Gives a mindfulness exercise to help improve mental health')
 async def mind(ctx):
     exercises = bot_config["mindfulness"]["exercises"]
     r = random.randrange(len(exercises))
