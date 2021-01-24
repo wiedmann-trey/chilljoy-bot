@@ -15,6 +15,10 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from chatterbot import ChatBot
+from chatterbot.trainers import ListTrainer
+from chatterbot.trainers import ChatterBotCorpusTrainer
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -31,6 +35,8 @@ intents.messages = True
 intents.presences = True
 
 bot = commands.Bot(command_prefix='g!', intents=intents)
+
+chilljoy = ChatBot(name = "Chilljoy", read_only = False, logic_adapters = ["chatterbot.logic.BestMatch"], storage_adapter = "chatterbot.storage.SQLStorageAdapter")
 
 timer_schedule = Scheduler(1)
 
@@ -381,11 +387,6 @@ async def population(ctx):
         for member in guild.members:
             await ctx.send(member)
 
-@bot.command(name='game')
-async def game(ctx):
-    await send_dms()
-    await check_game(ctx)
-
 with open("config.yaml", 'r') as stream:
     bot_config = yaml.safe_load(stream)
 
@@ -413,6 +414,16 @@ async def mind(ctx):
     r = random.randrange(len(exercises))
     await ctx.send(bot_config["mindfulness"]["text"])
     await ctx.send(exercises[r]["text"])
+
+@bot.command(name = 'chat')
+async def chat(ctx, r):
+    user_input = r
+
+    if (user_input == 'quit'):
+        return
+
+    response = chilljoy.get_response(user_input)
+    await ctx.send(response)
 
 bot.run(TOKEN)
 
