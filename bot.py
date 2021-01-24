@@ -2,7 +2,7 @@ import os
 import pymongo
 import asyncio
 import pickle
-from datetime import datetime
+import datetime
 
 from timer import Scheduler
 
@@ -31,6 +31,40 @@ bot = commands.Bot(command_prefix='g!', intents=intents)
 
 timer_schedule = Scheduler(1)
 
+def find_user(idd):
+    for guild in bot.guilds:
+        for m in guild.members:
+            if m.id == idd:
+                return m
+
+async def send_20_min(user):
+    print("20 min achieved")
+    m = find_user(user)
+
+    data = db.users.find_one({"id": m.id})
+
+    if m.dm_channel == None:
+        await m.create_dm()
+
+    if data["currently_playing"] == True:
+        await m.dm_channel.send("Try to look at something 20 feet away for 20 seconds!")
+    
+    db.users.update_one({"id": m.id}, {'$set': {"20_min_reminder": False}})
+
+async def send_1_hr(user):
+    print("1 hr achieved")
+    m = find_user(user)
+
+    data = db.users.find_one({"id": m.id})
+
+    if m.dm_channel == None:
+        await m.create_dm()
+
+    if data["currently_playing"] == True:
+        await m.dm_channel.send("Get up, move around, take a 5 minute break!")
+    
+    db.users.update_one({"id": m.id}, {'$set': {"1_hr_reminder": False}})
+
 async def check_game(channel):
     while True:
         for guild in bot.guilds:
@@ -48,16 +82,18 @@ async def check_game(channel):
         await asyncio.sleep(10)
 
 async def set_timers():
-    print("hi")
     while True:
         for guild in bot.guilds:
             for m in guild.members:
                 exist = db.users.find_one({"id": m.id})
                 if exist != None:
                     if exist['currently_playing'] == True:
-                        if exist['20_min_timer'] == False:
-                            timer_schedule.addEvent(datetime.time(min=20), m.id, send_20_min)
-                            db.users.update_one({"id": m.id}, {'$set': {"20_min_timer": True}})
+                        if exist['20_min_reminder'] == False and exist['health_reminders']==True:
+                            timer_schedule.addEvent(datetime.timedelta(minutes=20), m.id, send_20_min)
+                            db.users.update_one({"id": m.id}, {'$set': {"20_min_reminder": True}})
+                        if exist['1_hr_reminder'] == False and exist['health_reminders']==True:
+                            timer_schedule.addEvent(datetime.timedelta(hours=1), m.id, send_1_hr)
+                            db.users.update_one({"id": m.id}, {'$set': {"1_hr_reminder": True}})
         
         await asyncio.sleep(10)
 
@@ -92,6 +128,16 @@ async def send_dms():
 
 @bot.event
 async def on_ready():
+    for guild in bot.guilds:
+        for m in guild.members:
+            exist = db.users.find_one({"id": m.id})
+            if exist != None:
+                db.users.update_one({"id": m.id}, {'$set': {
+                    "currently_playing": False,
+                    "task_reminders": False,
+                    "health_reminders": False,
+                    "20_min_reminder": False,
+                    "1_hr_reminder": False}})
     guild = discord.utils.find(lambda g: g.name == GUILD, bot.guilds)
     
     print(f'{bot.user} is connected to the following guild:\n'
@@ -105,11 +151,23 @@ async def on_ready():
         if channel.name == "playing":
             chan = channel
 
+
+
     await asyncio.gather(
         check_game(chan),
         set_timers(),
-        timer_schedule.loop
+        timer_schedule.loop()
     )
+
+    # print("hi")
+
+    # await set_timers()
+
+    # loop = asyncio.create_task(timer_schedule.loop)
+    # # sched.addEvent(time, user, func)
+    # # loop = asyncio.create_task(sched.loop)
+
+    # await loop
 
     
 
@@ -230,18 +288,4 @@ async def game(ctx):
     
 bot.run(TOKEN)
 
-async def send_20_min(user):
-    m = find_user(user)
 
-    data = db.users.find_one({"id": m.id})
-
-    if data["currently_playing"] == True:
-        await m.dm_channel.send("Try to look at something 20 feet away for 20 seconds!")
-    
-    db.users.update_one({"id": m.id}, {'$set': {"20_min_timer": False}})
-
-def find_user(idd):
-    for guild in bot.guilds:
-        for m in guild.members:
-            if m.id == idd:
-                return m
