@@ -12,6 +12,6 @@ List of commands:
   help       Shows help
   join       Adds you to the list of users.
   mind       Gives a mindfulness exercise to help improve mental health.
-  posture    Gives info about sitting with a healthy posture
+  posture    Gives info about sitting with a healthy posture.
   task       Turns on or off task reminders.
   wrist      Gives a stretch to help prevent wrist injury
