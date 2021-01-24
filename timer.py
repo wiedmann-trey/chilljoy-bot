@@ -17,5 +17,6 @@ class Scheduler:
     def addEvent(self, dt, user, call):
         heapq.heappush(self.pq, Scheduler.event(dt, user, call))
 
-    def event(dt, user, call):
+    def event(self, dt, user, call):
         return (datetime.datetime.now() + dt, user, call)
+
