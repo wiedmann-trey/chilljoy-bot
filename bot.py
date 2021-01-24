@@ -48,7 +48,7 @@ async def send_20_min(user):
 
     if data["currently_playing"] == True:
         tips = bot_config["health_reminders"]["tips"]
-        r = random.randrange(len(tips)
+        r = random.randrange(len(tips))
         await m.dm_channel.send("Reminder:")
         await m.dm_channel.send(tips[r])
     
