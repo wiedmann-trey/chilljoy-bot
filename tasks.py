@@ -25,6 +25,7 @@ class Task():
     def __init__(self, description, hour, minute):
         self.description = description
         self.time = datetime.time(hour=hour, minute=minute)
-        print(difference(self.time,datetime.datetime.now().time()))
 
+    def time_until(self):
+        return difference(self.time,datetime.datetime.now().time())
 t = Task("Finish Math problems", 20, 30)
