@@ -353,7 +353,7 @@ async def finishtask(ctx, *args):
 
     await ctx.send(f'{hi.tasks[indd].description} has been set as done!')
 
-@bot.command(name='cleartask', help='Clears all tasks from your list of tasks')
+@bot.command(name='cleartask', help='Clears all tasks from your list of tasks.')
 async def cleartask(ctx, *args):
     m = ctx.author
     exist = db.users.find_one({"id": m.id})
@@ -373,7 +373,7 @@ async def cleartask(ctx, *args):
 with open("config.yaml", 'r') as stream:
     bot_config = yaml.safe_load(stream)
 
-@bot.command(name='brightness', help='Gives info about choosing a healthy screen brightness')
+@bot.command(name='brightness', help='Gives info about choosing a healthy screen brightness.')
 async def brightness(ctx):
     await ctx.send(bot_config["brightness"]["text"])
     await ctx.send(file=discord.File(bot_config["brightness"]["image"]))
@@ -391,7 +391,7 @@ async def wrist(ctx):
     await ctx.send(exercises[r]["text"])
     await ctx.send(file=discord.File(exercises[r]["image"]))
 
-@bot.command(name='mind', help='Gives a mindfulness exercise to help improve mental health')
+@bot.command(name='mind', help='Gives a mindfulness exercise to help improve mental health.')
 async def mind(ctx):
     exercises = bot_config["mindfulness"]["exercises"]
     r = random.randrange(len(exercises))
